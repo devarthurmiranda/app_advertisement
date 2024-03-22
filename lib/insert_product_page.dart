@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:app_anuncios/model/product.dart';
 
 class InsertProduct extends StatefulWidget {
-  const InsertProduct({super.key});
+  final Product? product;
+  const InsertProduct({super.key, this.product});
 
   @override
   State<InsertProduct> createState() => _InsertProductState();
@@ -13,6 +14,16 @@ class _InsertProductState extends State<InsertProduct> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.product != null) {
+      _titleController.text = widget.product!.title;
+      _descriptionController.text = widget.product!.description;
+      _priceController.text = widget.product!.price.toString();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

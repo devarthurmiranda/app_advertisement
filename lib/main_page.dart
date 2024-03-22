@@ -43,31 +43,68 @@ class _MainPageState extends State<MainPage> {
               // Wrapped ListView with Expanded to occupy remaining space
               child: ListView.separated(
                 itemCount: _products.length,
-                itemBuilder: (context, index) => Dismissible(
-                  key: Key(_products[index].title),
-                  background: Container(
-                    color: Colors.red,
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                  onDismissed: (direction) {
-                    setState(() {
-                      _products.removeAt(index);
-                    });
-                  },
-                  child: ListTile(
-                    leading: const Image(
-                      image: AssetImage('images/product.png'),
-                      width: 50,
-                      height: 50,
+                itemBuilder: (context, index) {
+                  Product product = _products[index];
+                  return Dismissible(
+                    key: Key(product.title),
+                    background: Container(
+                        color: Colors.green,
+                        alignment: Alignment.centerRight,
+                        child: const Icon(Icons.edit, color: Colors.white)),
+                    secondaryBackground: Container(
+                      color: Colors.red,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: const Icon(Icons.delete, color: Colors.white),
                     ),
-                    title: Text(_products[index].title),
-                    subtitle: Text(_products[index].description),
-                    trailing: Text(
-                        'R\$ ${_products[index].price.toStringAsFixed(2)} '),
-                  ),
-                ),
+                    confirmDismiss: (direction) async {
+                      if (direction == DismissDirection.startToEnd) {
+                        Product editedProduct = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => InsertProduct(
+                              product: _products[index],
+                            ),
+                          ),
+                        );
+                        if (editedProduct != null) {
+                          setState(() {
+                            _products[index] = editedProduct;
+                          });
+                        }
+                        return false;
+                      } else if (direction == DismissDirection.endToStart) {
+                        return true;
+                      }
+                    },
+                    onDismissed: (direction) {
+                      if (direction == DismissDirection.endToStart) {
+                        setState(() {
+                          _products.removeAt(index);
+                        });
+                      }
+                    },
+                    child: ListTile(
+                        leading: const Image(
+                          image: AssetImage('images/product.png'),
+                          width: 50,
+                          height: 50,
+                        ),
+                        title: Text(_products[index].title),
+                        subtitle: Text(_products[index].description),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'R\$ ${_products[index].price.toStringAsFixed(2)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )),
+                  );
+                },
                 separatorBuilder: (context, index) => const Divider(),
               ),
             ),
