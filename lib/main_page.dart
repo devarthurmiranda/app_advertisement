@@ -1,3 +1,4 @@
+import 'package:app_anuncios/database/helpers/product_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:app_anuncios/insert_product_page.dart';
 import 'package:app_anuncios/model/product.dart';
@@ -10,7 +11,18 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final List<Product> _products = [];
+  List<Product> _products = [];
+  ProductHelper _helper = ProductHelper();
+
+  @override
+  void initState() {
+    super.initState();
+    _helper.getAll().then((data) {
+      setState(() {
+        if (data != null) _products = data;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +34,7 @@ class _MainPageState extends State<MainPage> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center, // Added this line
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               margin: const EdgeInsets.only(top: 50),
@@ -59,7 +71,7 @@ class _MainPageState extends State<MainPage> {
                     ),
                     confirmDismiss: (direction) async {
                       if (direction == DismissDirection.startToEnd) {
-                        Product editedProduct = await Navigator.push(
+                        Product? editedProduct = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => InsertProduct(
@@ -96,7 +108,7 @@ class _MainPageState extends State<MainPage> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'R\$ ${_products[index].price.toStringAsFixed(2)}',
+                              'R\$ ${_products[index].price}',
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -118,9 +130,12 @@ class _MainPageState extends State<MainPage> {
               context,
               MaterialPageRoute(builder: (context) => const InsertProduct()),
             );
-            if (newProduct != null) {
+            Product? savedProduct = await _helper.saveProduct(newProduct!);
+            if (savedProduct != null) {
               setState(() {
                 _products.add(newProduct);
+                const snackbar = SnackBar(content: Text('Product saved!'));
+                ScaffoldMessenger.of(context).showSnackBar(snackbar);
               });
             }
           } catch (e) {

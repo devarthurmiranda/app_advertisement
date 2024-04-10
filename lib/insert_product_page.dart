@@ -21,7 +21,7 @@ class _InsertProductState extends State<InsertProduct> {
     if (widget.product != null) {
       _titleController.text = widget.product!.title;
       _descriptionController.text = widget.product!.description;
-      _priceController.text = widget.product!.price.toString();
+      _priceController.text = widget.product!.price;
     }
   }
 
@@ -73,9 +73,6 @@ class _InsertProductState extends State<InsertProduct> {
                   if (value!.isEmpty) {
                     return 'Price is required';
                   }
-                  if (double.tryParse(value) == null) {
-                    return 'Enter a valid price';
-                  }
                   return null;
                 },
                 decoration: const InputDecoration(
@@ -95,7 +92,7 @@ class _InsertProductState extends State<InsertProduct> {
                         Product product = Product(
                           _titleController.text,
                           _descriptionController.text,
-                          double.parse(_priceController.text),
+                          _priceController.text,
                         );
                         Navigator.pop(context, product);
                       }
