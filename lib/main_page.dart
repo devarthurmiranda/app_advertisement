@@ -2,6 +2,7 @@ import 'package:app_anuncios/database/helpers/product_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:app_anuncios/insert_product_page.dart';
 import 'package:app_anuncios/model/product.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -12,7 +13,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   List<Product> _products = [];
-  ProductHelper _helper = ProductHelper();
+  final ProductHelper _helper = ProductHelper();
 
   @override
   void initState() {
@@ -52,7 +53,6 @@ class _MainPageState extends State<MainPage> {
               ),
             ),
             Expanded(
-              // Wrapped ListView with Expanded to occupy remaining space
               child: ListView.separated(
                 itemCount: _products.length,
                 itemBuilder: (context, index) {
@@ -97,24 +97,42 @@ class _MainPageState extends State<MainPage> {
                       }
                     },
                     child: ListTile(
-                        leading: const Image(
-                          image: AssetImage('images/product.png'),
-                          width: 50,
-                          height: 50,
-                        ),
-                        title: Text(_products[index].title),
-                        subtitle: Text(_products[index].description),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              'R\$ ${_products[index].price}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                      leading: product.image != null
+                          ? CircleAvatar(
+                              child: ClipOval(
+                                child: Image.file(product.image!),
                               ),
+                            )
+                          : const SizedBox(),
+                      title: Text(_products[index].title),
+                      subtitle: Text(_products[index].description),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            'R\$ ${_products[index].price}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      ),
+                      onLongPress: () async {
+                        final Uri params = Uri(
+                            scheme: 'sms',
+                            path: '+5511999999999',
+                            queryParameters: {
+                              'body':
+                                  '$_products[index].title - R\$ ${_products[index].price}'
+                            });
+                        final url = params.toString();
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
+                    ),
                   );
                 },
                 separatorBuilder: (context, index) => const Divider(),
@@ -139,7 +157,7 @@ class _MainPageState extends State<MainPage> {
               });
             }
           } catch (e) {
-            print(e);
+            throw Exception('Error saving product: $e');
           }
         },
         child: const Icon(Icons.shopping_bag),

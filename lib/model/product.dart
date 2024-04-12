@@ -5,28 +5,31 @@ class Product {
   late String title;
   late String description;
   late String price;
+  late File? image;
 
-  Product(this.title, this.description, this.price);
+  Product(this.title, this.description, this.price, this.image);
 
   Product.fromMap(Map map) {
-    this.id = map['id'];
-    this.title = map['title'];
-    this.description = map['description'];
-    this.price = map['price'];
+    id = map['id'];
+    title = map['title'];
+    description = map['description'];
+    price = map['price'];
+    image = map['imagePath'] != '' ? File(map['imagePath']) : null;
   }
 
   Map<String, dynamic> toMap() {
     Map<String, dynamic> map = {
-      'id': this.id,
-      'title': this.title,
-      'description': this.description,
-      'price': this.price
+      'id': id,
+      'title': title,
+      'description': description,
+      'price': price,
+      'imagePath': image?.path
     };
     return map;
   }
 
   @override
   String toString() {
-    return "Product(id: $id, title: $title, description: $description, price: $price)";
+    return "Product(id: $id, title: $title, description: $description, price: $price, image: $image)";
   }
 }

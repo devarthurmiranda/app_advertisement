@@ -3,14 +3,15 @@ import 'package:app_anuncios/model/product.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ProductHelper {
-  static final String tableName = 'product';
-  static final String idColumn = 'id';
-  static final String titleColumn = 'title';
-  static final String descriptionColumn = 'description';
-  static final String priceColumn = 'price';
+  static const String tableName = 'product';
+  static const String idColumn = 'id';
+  static const String titleColumn = 'title';
+  static const String descriptionColumn = 'description';
+  static const String priceColumn = 'price';
+  static const String imagePathColumn = 'imagePath';
 
   static String get createScript {
-    return "CREATE TABLE ${tableName}($idColumn INTEGER PRIMARY KEY AUTOINCREMENT, $titleColumn TEXT NOT NULL, $descriptionColumn TEXT NOT NULL, $priceColumn TEXT NOT NULL );";
+    return "CREATE TABLE $tableName ($idColumn INTEGER PRIMARY KEY AUTOINCREMENT, $titleColumn TEXT NOT NULL, $descriptionColumn TEXT NOT NULL, $priceColumn TEXT NOT NULL, $imagePathColumn STRING);";
   }
 
   Future<Product?> saveProduct(Product product) async {
@@ -25,8 +26,13 @@ class ProductHelper {
   Future<List<Product>?> getAll() async {
     Database? db = await DatabaseHelper().db;
     if (db == null) return null;
-    List<Map> returnedProducts = await db.query(tableName,
-        columns: [idColumn, titleColumn, descriptionColumn, priceColumn]);
+    List<Map> returnedProducts = await db.query(tableName, columns: [
+      idColumn,
+      titleColumn,
+      descriptionColumn,
+      priceColumn,
+      imagePathColumn
+    ]);
     List<Product> products = List.empty(growable: true);
 
     for (Map product in returnedProducts) {

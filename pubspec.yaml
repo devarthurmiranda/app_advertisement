@@ -12,6 +12,8 @@ dependencies:
   path_provider: ^2.0.8
   shared_preferences: ^2.0.10
   sqflite: ^2.0.1
+  image_picker: ^0.8.4+4
+  url_launcher: ^6.2.6
 
 
 dev_dependencies:

@@ -18,9 +18,9 @@ class DatabaseHelper {
 
     try {
       return _db = await openDatabase(path,
-          version: 1, onCreate: _onCreateDB, onUpgrade: _onUpgradeDB);
+          version: 2, onCreate: _onCreateDB, onUpgrade: _onUpgradeDB);
     } catch (e) {
-      print(e);
+      throw Exception(e);
     }
   }
 
