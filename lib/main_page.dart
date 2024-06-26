@@ -80,8 +80,11 @@ class _MainPageState extends State<MainPage> {
                           ),
                         );
                         if (editedProduct != null) {
+                          _helper.editProduct(editedProduct);
+
                           setState(() {
-                            _products[index] = editedProduct;
+                            _products.removeAt(index);
+                            _products.insert(index, editedProduct);
                           });
                         }
                         return false;
@@ -92,6 +95,7 @@ class _MainPageState extends State<MainPage> {
                     onDismissed: (direction) {
                       if (direction == DismissDirection.endToStart) {
                         setState(() {
+                          _helper.deleteProduct(_products[index]);
                           _products.removeAt(index);
                         });
                       }

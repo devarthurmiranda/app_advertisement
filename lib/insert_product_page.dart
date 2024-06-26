@@ -137,13 +137,22 @@ class _InsertProductState extends State<InsertProduct> {
                         ),
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            Product product = Product(
-                              _titleController.text,
-                              _descriptionController.text,
-                              _priceController.text,
-                              _image,
-                            );
-                            Navigator.pop(context, product);
+                            if (widget.product == null) {
+                              Product product = Product(
+                                _titleController.text,
+                                _descriptionController.text,
+                                _priceController.text,
+                                _image,
+                              );
+                              Navigator.pop(context, product);
+                            } else {
+                              widget.product!.title = _titleController.text;
+                              widget.product!.description =
+                                  _descriptionController.text;
+                              widget.product!.price = _priceController.text;
+                              widget.product!.image = _image;
+                              Navigator.pop(context, widget.product!);
+                            }
                           }
                         },
                         child: const Text('Publish'),
